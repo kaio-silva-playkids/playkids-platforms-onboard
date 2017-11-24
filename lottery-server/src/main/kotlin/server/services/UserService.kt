@@ -20,6 +20,9 @@ class UserService {
             UserEntity.new {
                 username = user.username
                 email = user.email
+                password = user.password.orEmpty()
+                credit =  50
+
             }
         }
     }
