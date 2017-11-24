@@ -1,35 +1,17 @@
 package server.configuration
 
 import com.typesafe.config.ConfigFactory
-import org.jetbrains.exposed.sql.Database
+import server.persistence.Configuration
 
-import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.SchemaUtils.create
-import org.jetbrains.exposed.sql.SchemaUtils.drop
-import server.domain.models.Lotteries
-import server.domain.models.Tickets
-import server.domain.models.Users
-
-object PostgreSQLConfiguration {
-
-    //TODO get configuration from conf.
+class PostgreSQLConfiguration : Configuration {
 
     private val config = ConfigFactory.load().getConfig("postgresql")
-    private val host = config.getString("host")
-    private val port = config.getInt("port")
-    private val database = config.getString("database")
-    private val user = config.getString("user")
-    private val password = config.getString("password")
+    val host = config.getString("host")
+    val port = config.getInt("port")
+    val database = config.getString("database")
+    override val user = config.getString("user")
+    override val password = config.getString("password")
+    override val driver = "org.postgresql.Driver"
 
-    val db = Database.connect("jdbc:postgresql://$host:$port/$database",
-            "org.postgresql.Driver", user, password)
-
-    init {
-
-        transaction {
-            drop(Users, Tickets, Lotteries)
-            create(Users, Tickets, Lotteries)
-        }
-    }
-
+    override fun url(): String = "jdbc:postgresql://$host:$port/$database"
 }

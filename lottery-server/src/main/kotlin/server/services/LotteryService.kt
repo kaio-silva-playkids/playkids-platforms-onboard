@@ -1,5 +1,30 @@
 package server.services
 
-import server.domain.models.User
+import org.jetbrains.exposed.sql.transactions.transaction
+import server.domain.models.Lotteries
+import server.domain.models.Lottery
+import server.domain.models.LotteryEntity
 
-class LotteryService {}
+
+class LotteryService {
+
+    fun create(lottery: Lottery) {
+
+        require(lottery.draw.isAfterNow)
+
+        transaction {
+            if(!LotteryEntity.find { Lotteries.id eq lottery.id}.empty()) {
+                // TODO Raise 409 (Conflict)
+                throw Exception("Lottery '${lottery.id}' already exists")
+            }
+
+            LotteryEntity.new {
+                price = lottery.price
+                draw = lottery.draw
+            }
+        }
+    }
+
+    fun find(id: Int): LotteryEntity? = transaction { return@transaction LotteryEntity.findById(id) }
+
+}

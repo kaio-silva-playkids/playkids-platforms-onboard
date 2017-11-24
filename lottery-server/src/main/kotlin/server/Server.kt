@@ -8,21 +8,27 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
-import org.jetbrains.exposed.sql.name
-import server.routes.api
-import server.configuration.UserConfiguration.userService
-import server.configuration.PostgreSQLConfiguration.db
-import com.fasterxml.jackson.databind.*
-import com.fasterxml.jackson.datatype.jsr310.*
 import io.ktor.jackson.jackson
+import server.routes.api
+import server.configuration.ServicesConfiguration.authenticationService
+import server.configuration.ServicesConfiguration.userService
+import server.configuration.ServicesConfiguration.lotteryService
+import server.configuration.ServicesConfiguration.ticketService
+import server.configuration.PostgreSQLConfiguration
+import server.persistence.Database
+import com.fasterxml.jackson.databind.*
+import com.fasterxml.jackson.datatype.joda.JodaModule
+import com.fasterxml.jackson.datatype.jsr310.*
 import org.slf4j.LoggerFactory
 
 class Server(val port: Int) {
 
+    private val database: Database = object :Database(PostgreSQLConfiguration()){}
+
     fun start() {
 
-        //TODO must avoid lazy object initialization
-        require(db.name.isNotBlank())
+        // TODO refact
+        database.start()
 
         embeddedServer(Netty, port) {
 
@@ -44,12 +50,13 @@ class Server(val port: Int) {
                 jackson {
                     configure(SerializationFeature.INDENT_OUTPUT, true)
                     registerModule(JavaTimeModule())
+                    registerModule(JodaModule())
                 }
             }
 
             log.info("Routing pipeline...")
             routing {
-                api(userService)
+                api(authenticationService, userService, lotteryService, ticketService)
             }
         }.start(wait = true)
 

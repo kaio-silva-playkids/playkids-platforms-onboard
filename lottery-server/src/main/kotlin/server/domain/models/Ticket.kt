@@ -7,12 +7,25 @@ import org.jetbrains.exposed.dao.IntIdTable
 
 object Tickets: IntIdTable() {
     val user = reference("user", Users)
+    val lottery = reference("lottery", Lotteries)
 }
 
-class Ticket(id: EntityID<Int>): IntEntity(id) {
+data class Ticket(var id: Int?, var user: User, var lottery: Lottery) {
+    init {
+        require(user.id != null)
+        require(lottery.id != null)
+    }
 
-    companion object : IntEntityClass<Ticket>(Tickets)
+    fun asEntity(): TicketEntity = TicketEntity(EntityID(id, Tickets))
+}
 
-    val user by Tickets.user
+class TicketEntity(id: EntityID<Int>): IntEntity(id) {
+
+    companion object : IntEntityClass<TicketEntity>(Tickets)
+
+    var user by UserEntity referencedOn Tickets.user
+    var lottery by LotteryEntity referencedOn Tickets.lottery
+
+    //fun asTicket(): Ticket = Ticket(id.value)
 
 }

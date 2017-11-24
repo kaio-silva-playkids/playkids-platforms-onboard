@@ -14,6 +14,7 @@ fun Route.user(userService: UserService) {
 
     route("user") {
 
+
         get("{id}") {
             val id = call.parameters["id"]!!
             val entity = userService.find(id.toInt())
