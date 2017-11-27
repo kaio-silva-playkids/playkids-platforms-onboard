@@ -9,7 +9,8 @@ import io.ktor.routing.route
 import server.routes.authentication.authentication
 import server.routes.lottery.lottery
 import server.routes.ticket.ticket
-import server.routes.user.user
+import server.routes.account.account
+import server.routes.account.user
 import server.services.AuthenticationService
 import server.services.LotteryService
 import server.services.TicketService
@@ -23,13 +24,15 @@ fun Route.api(authenticationService: AuthenticationService,
 
     route("api") {
 
+        account(userService)
+
         authentication(authenticationService)
 
-        user(userService)
+        user(userService, authenticationService)
 
-        lottery(lotteryService)
+        lottery(lotteryService, authenticationService)
 
-        ticket(ticketService)
+        ticket(ticketService, authenticationService)
 
         get {
             call.respondText("Lottery Server API", ContentType.Text.Html)

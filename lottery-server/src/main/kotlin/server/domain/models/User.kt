@@ -4,19 +4,21 @@ import org.jetbrains.exposed.dao.EntityID
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.IntIdTable
+import org.jetbrains.exposed.sql.lowerCase
 
 object Users: IntIdTable() {
     val username = varchar("username", length = 50)
     val email = varchar("email", length = 50)
     val credit = integer("credit")
-    val password = varchar(name = "password", length = 50)
+    val password = text(name = "password")
 }
 
-data class User(var id: Int?, var username: String, var email: String, var password: String?, var credit: Int) {
+data class User(var id: Int?, var username: String, var email: String, var password: String, var credit: Int) {
 
     init {
         require(username.isNotEmpty())
         require(email.isNotEmpty())
+        require(password.isNotEmpty())
     }
 }
 
@@ -29,6 +31,6 @@ class UserEntity(id: EntityID<Int>) : IntEntity(id) {
     var credit by Users.credit
     var password by Users.password
 
-    fun asUser(): User = User(id.value, username, email, null, credit)
+    fun asUser(): User = User(id.value, username, email, password, credit)
 
 }

@@ -6,7 +6,6 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import server.domain.models.Lotteries
 import server.domain.models.Tickets
 import server.domain.models.Users
-import server.domain.relationships.LotteriesTickets
 
 open class Database(private var configuration: Configuration) {
 
@@ -15,7 +14,7 @@ open class Database(private var configuration: Configuration) {
         val db = Database.connect(configuration.url(), configuration.driver, configuration.user, configuration.password)
 
         transaction {
-            SchemaUtils.drop(Users, Lotteries, Tickets, LotteriesTickets)
+            SchemaUtils.drop(Users, Lotteries, Tickets)
             SchemaUtils.create(Users, Lotteries, Tickets)
         }
 

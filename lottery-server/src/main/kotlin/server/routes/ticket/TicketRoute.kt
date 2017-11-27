@@ -7,11 +7,15 @@ import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.route
+import server.security.authenticate
+import server.services.AuthenticationService
 import server.services.TicketService
 
-fun Route.ticket(ticketService: TicketService) {
+fun Route.ticket(ticketService: TicketService, authenticationService: AuthenticationService) {
 
     route("ticket") {
+
+        authenticate(authenticationService)
 
         get("{id}") {
             val id = call.parameters["id"]!!

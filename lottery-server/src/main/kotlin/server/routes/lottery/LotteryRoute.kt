@@ -8,11 +8,15 @@ import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.route
 import server.domain.models.Lottery
+import server.security.authenticate
+import server.services.AuthenticationService
 import server.services.LotteryService
 
-fun Route.lottery(lotteryService: LotteryService) {
+fun Route.lottery(lotteryService: LotteryService, authenticationService: AuthenticationService) {
 
     route("lottery") {
+
+        authenticate(authenticationService)
 
         get("{id}") {
             val id = call.parameters["id"]!!

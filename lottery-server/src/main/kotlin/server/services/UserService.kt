@@ -1,6 +1,7 @@
 package server.services
 
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.transactions.transaction
 import server.domain.models.User
 import server.domain.models.UserEntity
@@ -9,7 +10,9 @@ import server.security.Hash
 
 class UserService {
 
-    fun create(user: User) {
+    fun create(user: User): User? {
+
+        var inserted: User? = null
 
         transaction {
             if(!UserEntity.find { Users.username eq user.username }.empty()) {
@@ -17,27 +20,30 @@ class UserService {
                 throw Exception("User '${user.username}' already exists")
             }
 
-            UserEntity.new {
+            inserted =  UserEntity.new {
                 username = user.username
                 email = user.email
-                password = user.password.orEmpty()
+                password = Hash.sha512(user.password.orEmpty()).toLowerCase()
                 credit =  50
-
-            }
+            }.asUser()
         }
+
+        return inserted
     }
 
     fun find(id: Int): UserEntity? = transaction { return@transaction UserEntity.findById(id) }
 
     fun find(username: String): UserEntity? = transaction { return@transaction UserEntity.find { Users.username eq username }.first() }
 
-    fun authenticate(username: String, password: String): UserEntity? {
+    fun authenticate(login: String, password: String): UserEntity? {
+
+        var entity: UserEntity? = null
 
         transaction {
-            return@transaction UserEntity.find { Users.username.eq(username) and Users.password.eq(Hash.sha512(password)) }.first()
+            entity =  UserEntity.find { (Users.username.eq(login) or Users.email.eq(login)) and Users.password.eq(password) }.first()
         }
 
-        return null
+        return entity
     }
 
 }

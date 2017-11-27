@@ -11,8 +11,8 @@ import io.ktor.response.respond
 fun Route.authentication(authenticationService: AuthenticationService) {
     route("auth") {
 
-        post<AuthenticationRequest> { (username, password) ->
-            val user = authenticationService.authenticate(username, password)
+        post<AuthenticationRequest> { (login, password) ->
+            val user = authenticationService.authenticate(login, password)
 
             if (user != null) {
                 call.respond(AuthenticationResponse(authenticationService.generateToken(user)))

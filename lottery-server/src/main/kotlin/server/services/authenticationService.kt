@@ -6,6 +6,8 @@ import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.exceptions.JWTVerificationException
 import com.auth0.jwt.interfaces.DecodedJWT
 import server.domain.models.User
+import server.security.SecurityContext
+import server.security.UserSecurityContext
 import java.time.Clock
 import java.time.Duration
 import java.util.*
@@ -15,13 +17,17 @@ class AuthenticationService(val userService: UserService, val clock: Clock, toke
     private val jwtAlgorithm = Algorithm.HMAC512(tokenSecret)
     private val jwtVerifier = (JWT.require(jwtAlgorithm) as JWTVerifier.BaseVerification).build(JWTClock(clock))
 
-    suspend fun authenticate(username: String, password: String): User? = userService.authenticate(username, password)?.asUser()
+    suspend fun authenticate(login: String, password: String): User? = userService.authenticate(login, password)?.asUser()
 
     suspend fun refreshToken(token: String): String? =
             decodeToken(token)
                     ?.let { userService.find(it.getClaim(Claims.USERNAME).asString()) }
                     ?.let { generateToken(it.asUser()) }
 
+    suspend fun generateUserSecurityContext(token: String): SecurityContext? =
+            decodeToken(token)
+                    ?.let { userService.find(it.getClaim(Claims.USERNAME).asString()) }
+                    ?.let { UserSecurityContext(it.asUser()) }
 
     fun decodeToken(token: String): DecodedJWT? =
             try {
