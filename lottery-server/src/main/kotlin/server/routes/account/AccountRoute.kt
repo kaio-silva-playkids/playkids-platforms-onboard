@@ -1,12 +1,11 @@
 package server.routes.account
 
+import com.movile.kotlin.commons.ktor.post
 import io.ktor.application.call
+import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
 import io.ktor.routing.Route
-import io.ktor.routing.get
 import io.ktor.routing.route
-import com.movile.kotlin.commons.ktor.post
-import io.ktor.http.HttpStatusCode
 import server.Server
 import server.domain.models.User
 import server.services.UserService

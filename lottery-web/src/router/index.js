@@ -31,8 +31,6 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
-  console.log(to);
-  console.log(from);
   if (to.path !== '/login' && !Vue.authService.isLogged()) {
     if (to.path === '/account') {
       next();

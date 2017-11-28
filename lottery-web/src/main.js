@@ -3,12 +3,20 @@
 import Vue from 'vue';
 import VueResource from 'vue-resource';
 
+import lodash from 'lodash';
+import moment from 'moment';
+
 import Element from './element';
 
 import App from './App.vue';
 import router from './router';
 import Services from './services';
+import Filters from './components/filters';
 
+Vue.lodash = lodash;
+Vue.moment = moment;
+
+Vue.prototype.$lodash = lodash;
 
 Vue.config.productionTip = false;
 
@@ -16,6 +24,7 @@ Vue.use(Element);
 
 Vue.use(VueResource);
 Vue.use(Services);
+Vue.use(Filters);
 
 Vue.http.options.root = 'http://localhost:8082/api';
 Vue.http.interceptors.push((request, next) => {

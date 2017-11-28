@@ -19,7 +19,7 @@ curl http://localhost:8082/api/user/1
 curl http://localhost:8082/api/lottery -v -X PUT -d '{"price" : 50, "draw" : "2017-11-24T18:00:00.000-02:00[America/Sao_Paulo]"}' -H 'Content-type:application/json'
 
 * Find lottery:
-curl http://localhost:8082/api/lottery/1
+**curl http://localhost:8082/api/lottery/1**
 
 * Buy ticket:
 curl http://localhost:8082/api/ticket/buy -v -X POST -d '{"user" : 1, "lottery" : 1}' -H 'Content-type:application/json'    

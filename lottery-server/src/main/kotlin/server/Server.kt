@@ -1,25 +1,25 @@
 package server
 
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.joda.JodaModule
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import io.ktor.application.install
 import io.ktor.application.log
 import io.ktor.features.*
-import io.ktor.routing.routing
-import io.ktor.server.engine.embeddedServer
-import io.ktor.server.netty.Netty
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.jackson.jackson
-import server.routes.api
+import io.ktor.routing.routing
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
+import org.slf4j.LoggerFactory
+import server.configuration.PostgreSQLConfiguration
 import server.configuration.ServicesConfiguration.authenticationService
-import server.configuration.ServicesConfiguration.userService
 import server.configuration.ServicesConfiguration.lotteryService
 import server.configuration.ServicesConfiguration.ticketService
-import server.configuration.PostgreSQLConfiguration
+import server.configuration.ServicesConfiguration.userService
 import server.persistence.Database
-import com.fasterxml.jackson.databind.*
-import com.fasterxml.jackson.datatype.joda.JodaModule
-import com.fasterxml.jackson.datatype.jsr310.*
-import org.slf4j.LoggerFactory
+import server.routes.api
 
 class Server(val port: Int) {
 

@@ -33,7 +33,7 @@ class UserService {
 
     fun find(id: Int): UserEntity? = transaction { return@transaction UserEntity.findById(id) }
 
-    fun find(username: String): UserEntity? = transaction { return@transaction UserEntity.find { Users.username eq username }.first() }
+    fun find(username: String): UserEntity? = transaction { return@transaction UserEntity.find { Users.username eq username }.firstOrNull() }
 
     fun authenticate(login: String, password: String): UserEntity? {
 

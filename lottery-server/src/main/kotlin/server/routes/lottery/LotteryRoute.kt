@@ -18,6 +18,15 @@ fun Route.lottery(lotteryService: LotteryService, authenticationService: Authent
 
         authenticate(authenticationService)
 
+        get {
+            val lotteries = lotteryService.all()
+
+            if(lotteries != null)
+                call.respond(lotteries)
+            else
+                call.respond(HttpStatusCode.NoContent)
+        }
+
         get("{id}") {
             val id = call.parameters["id"]!!
             val entity = lotteryService.find(id.toInt())

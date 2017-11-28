@@ -1,12 +1,12 @@
 package server.routes.authentication
 
 import com.movile.kotlin.commons.ktor.post
-import io.ktor.routing.Route
-import io.ktor.routing.route
-import server.services.AuthenticationService
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
+import io.ktor.routing.Route
+import io.ktor.routing.route
+import server.services.AuthenticationService
 
 fun Route.authentication(authenticationService: AuthenticationService) {
     route("auth") {

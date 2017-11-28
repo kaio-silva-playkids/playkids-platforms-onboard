@@ -6,11 +6,11 @@ import io.ktor.response.respondText
 import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.route
+import server.routes.account.account
+import server.routes.account.user
 import server.routes.authentication.authentication
 import server.routes.lottery.lottery
 import server.routes.ticket.ticket
-import server.routes.account.account
-import server.routes.account.user
 import server.services.AuthenticationService
 import server.services.LotteryService
 import server.services.TicketService

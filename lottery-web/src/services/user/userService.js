@@ -1,9 +1,8 @@
-const ACCOUNT = 'account';
+const USER = 'user';
 
 export default Vue => ({
-  create(user) {
-    return Vue.http.post(
-      `${ACCOUNT}`, user)
+  profile() {
+    return Vue.http.get(`${USER}/profile`)
       .then(response => response.body)
       .catch(error => Promise.reject(error.body));
   },

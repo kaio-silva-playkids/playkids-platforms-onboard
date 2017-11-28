@@ -1,9 +1,8 @@
-const ACCOUNT = 'account';
+const LOTTERY = 'lottery';
 
 export default Vue => ({
-  create(user) {
-    return Vue.http.post(
-      `${ACCOUNT}`, user)
+  search(options) {
+    return Vue.http.get(LOTTERY, { params: options })
       .then(response => response.body)
       .catch(error => Promise.reject(error.body));
   },

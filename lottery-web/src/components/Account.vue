@@ -44,7 +44,6 @@
     name: 'account',
     data() {
       return {
-        loading: false,
         form: {
           username: '',
           email: '',

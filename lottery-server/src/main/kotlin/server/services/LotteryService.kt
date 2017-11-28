@@ -19,6 +19,7 @@ class LotteryService {
             }
 
             LotteryEntity.new {
+                award = lottery.award
                 price = lottery.price
                 draw = lottery.draw
             }
@@ -26,5 +27,9 @@ class LotteryService {
     }
 
     fun find(id: Int): LotteryEntity? = transaction { return@transaction LotteryEntity.findById(id) }
+
+    fun all(): List<Lottery>? = transaction {
+        return@transaction LotteryEntity.all().map { lotteryEntity -> lotteryEntity.asLottery() }.toList()
+    }
 
 }

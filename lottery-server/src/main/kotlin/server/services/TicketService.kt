@@ -2,7 +2,10 @@ package server.services
 
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
-import server.domain.models.*
+import server.domain.models.LotteryEntity
+import server.domain.models.TicketEntity
+import server.domain.models.UserEntity
+import server.domain.models.Users
 
 class TicketService {
 

@@ -9,7 +9,6 @@ import io.ktor.request.header
 import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.util.AttributeKey
-import server.Server
 import server.services.AuthenticationService
 
 val SECURITY_CONTEXT_ATTRIBUTE = AttributeKey<SecurityContext>("security_context")

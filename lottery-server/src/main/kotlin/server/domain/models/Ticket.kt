@@ -26,6 +26,6 @@ class TicketEntity(id: EntityID<Int>): IntEntity(id) {
     var user by UserEntity referencedOn Tickets.user
     var lottery by LotteryEntity referencedOn Tickets.lottery
 
-    //fun asTicket(): Ticket = Ticket(id.value)
+    fun asTicket(): Ticket = Ticket(id.value, user.asUser(), lottery.asLottery())
 
 }

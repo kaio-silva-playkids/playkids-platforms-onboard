@@ -19,9 +19,6 @@ export default Vue => ({
         const token = response.body.token;
         const credentials = jwtDecode(token);
 
-        console.log(token);
-        console.log(credentials);
-
         window.localStorage.setItem(JWT, token);
         window.localStorage.setItem(CREDENTIALS, JSON.stringify(credentials));
         this.credentials = credentials;
