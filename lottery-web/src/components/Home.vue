@@ -10,7 +10,7 @@
         </el-submenu>
         <el-menu-item index="3"><a href="https://github.com/kaio-silva-playkids/playkids-platforms-onboard" target="_blank">Github</a></el-menu-item>
 
-        <li class="el-submenu profile">
+        <li v-if="user" class="el-submenu profile">
           <div class="el-submenu__title"> Profile: {{user.username}} | credits: {{user.credit}}</div>
         </li>
       </el-menu>
@@ -26,9 +26,9 @@
               <div class="overlay award">Award: {{lottery.award}}</div>
               <img src="../assets/card.png" class="image">
             </div>
-            <div style="padding: 14px;">
-              <h3>Lottery #{{lottery.id}}</h3>
-              <div class="bottom clearfix">
+            <h3>Lottery #{{lottery.id}}</h3>
+            <div style="padding: 12px;">
+              <div class="bottom">
                 <time class="time">{{ lottery.draw | formatDate }}</time>
                 <el-button type="text" class="button">Buy Ticket</el-button>
               </div>
@@ -43,56 +43,56 @@
 
 <script>
 
-export default {
-  name: 'Home',
-  data() {
-    return {
-      active: '1-1',
-      loading: false,
-      lotteries: null,
-      user: null,
-      currentDate: new Date(),
-    };
-  },
-  methods: {
-    handleSelect(key, keyPath) {
-      console.log(key, keyPath);
+  export default {
+    name: 'Home',
+    data() {
+      return {
+        active: '1-1',
+        loading: false,
+        lotteries: null,
+        user: null,
+        currentDate: new Date(),
+      };
     },
-    loadProfile() {
-      return this.$userService.profile().then((response) => {
-        this.user = response;
-        console.log(this.user);
+    methods: {
+      handleSelect(key, keyPath) {
+        console.log(key, keyPath);
+      },
+      profile() {
+        return this.$userService.profile().then((response) => {
+          this.user = response;
+        });
+      },
+      search() {
+        this.loading = true;
+
+        return this.$lotteryService.search().then((response) => {
+          this.loading = false;
+
+          this.lotteries = this.$lodash.differenceBy(response, this.user.tickets.map(ticket => ticket.lottery), 'id');
+        })
+          .catch((error) => {
+            this.loading = false;
+
+            this.$message.error(`Failed to get lotteries: ${error.description}`);
+          });
+      },
+    },
+    date(draw) {
+      return this.$moment.utc(draw).format('DD/MM/YYYY HH:mm:ss');
+    },
+    created() {
+      this.debouncedProfile =
+        this.$lodash.debounce(this.profile, 500, { leading: true, trailing: true });
+
+      this.debouncedSearch =
+        this.$lodash.debounce(this.search, 500, { leading: true, trailing: true });
+
+      this.debouncedProfile().then(() => {
+        this.debouncedSearch();
       });
     },
-    search() {
-      this.loading = true;
-
-      return this.$lotteryService.search().then((response) => {
-        this.loading = false;
-        this.lotteries = response;
-      })
-      .catch((error) => {
-        this.loading = false;
-
-        this.$message.error(`Failed to get lotteries: ${error.description}`);
-      });
-    },
-  },
-  date(draw) {
-    return this.$moment.utc(draw).format('DD/MM/YYYY HH:mm:ss');
-  },
-  created() {
-    this.debouncedProfile =
-      this.$lodash.debounce(this.loadProfile, 500, { leading: true, trailing: true });
-
-    this.debouncedProfile();
-
-    this.debouncedSearch =
-      this.$lodash.debounce(this.search, 500, { leading: true, trailing: true });
-
-    this.debouncedSearch();
-  },
-};
+  };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -106,8 +106,12 @@ export default {
     height: 100%;
   }
 
+  .el-submenu {
+    z-index: 100;
+  }
+
   .el-card {
-    width: 300px;
+    margin: 20px;
   }
 
   .card-image {
@@ -116,7 +120,7 @@ export default {
 
   .overlay {
     position: absolute;
-    z-index: 1000;
+    z-index: 50;
     padding: 5px;
     color: #FFFFFF;
     font-weight: bold;
@@ -143,11 +147,12 @@ export default {
   .time {
     font-size: 14px;
     color: #999;
+    float: left;
   }
 
   .bottom {
-    margin-top: 13px;
-    line-height: 12px;
+    line-height: 16px;
+    margin-bottom: 12px;
   }
 
   .button {
@@ -158,16 +163,6 @@ export default {
   .image {
     width: 100%;
     display: block;
-  }
-
-  .clearfix:before,
-  .clearfix:after {
-    display: table;
-    content: "";
-  }
-
-  .clearfix:after {
-    clear: both
   }
 
 </style>
