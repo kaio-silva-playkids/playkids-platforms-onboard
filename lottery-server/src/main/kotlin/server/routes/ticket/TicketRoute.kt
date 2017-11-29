@@ -7,11 +7,14 @@ import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.route
+import server.domain.models.Lottery
 import server.security.authenticate
+import server.security.securityContext
 import server.services.AuthenticationService
 import server.services.TicketService
+import server.services.UserService
 
-fun Route.ticket(ticketService: TicketService, authenticationService: AuthenticationService) {
+fun Route.ticket(ticketService: TicketService, userService: UserService, authenticationService: AuthenticationService) {
 
     route("ticket") {
 
@@ -27,11 +30,19 @@ fun Route.ticket(ticketService: TicketService, authenticationService: Authentica
                 call.respond(HttpStatusCode.NotFound)
         }
 
-        post<BuyTicketRequest>("buy") { request -> ticketService.buy(request.user, request.lottery)
-            call.respond(HttpStatusCode.Created)
+        post<Lottery>("buy") { lottery ->
+
+            val context = call.securityContext()
+            var entity = userService.find(context.principal)
+
+            if(entity != null) {
+                val user = ticketService.buy(entity, lottery)
+
+                if(user != null)
+                    call.respond(HttpStatusCode.OK, user.fetch().asUser())
+            } else
+                call.respond(HttpStatusCode.Forbidden)
         }
 
     }
 }
-
-data class BuyTicketRequest(val user: Int, val lottery: Int)

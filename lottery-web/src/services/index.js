@@ -6,6 +6,8 @@ import LotteryService from '../services/lottery/lotteryService';
 
 import UserService from '../services/user/userService';
 
+import TicketService from '../services/ticket/ticketService';
+
 export default {
   /* eslint no-param-reassign: ["error", { "props": false }] */
   install(Vue) {
@@ -21,5 +23,8 @@ export default {
     // user service
     Vue.userService = UserService(Vue);
     Vue.prototype.$userService = Vue.userService;
+    // ticket service
+    Vue.ticketService = TicketService(Vue);
+    Vue.prototype.$ticketService = Vue.ticketService;
   },
 };

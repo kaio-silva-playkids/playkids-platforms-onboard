@@ -10,13 +10,11 @@ object Tickets: IntIdTable() {
     val lottery = reference("lottery", Lotteries)
 }
 
-data class Ticket(var id: Int?, var user: User, var lottery: Lottery) {
+data class Ticket(val id: Int?, var user: User, var lottery: Lottery) {
     init {
         require(user.id != null)
         require(lottery.id != null)
     }
-
-    fun asEntity(): TicketEntity = TicketEntity(EntityID(id, Tickets))
 }
 
 class TicketEntity(id: EntityID<Int>): IntEntity(id) {

@@ -19,43 +19,76 @@ open class Database(private var configuration: Configuration) {
 
             // TODO put on DML config
             //DML
-            LotteryEntity.new {
+            val l1 = LotteryEntity.new {
                 award = 16;
                 price = 2;
-                draw = DateTime.now().plusDays(3)
+                draw = DateTime.now().plusSeconds(3)
             }
-            LotteryEntity.new {
+            val l2 = LotteryEntity.new {
                 award = 256;
                 price = 16;
-                draw = DateTime.now().plusDays(5)
+                draw = DateTime.now().plusSeconds(5)
             }
-            LotteryEntity.new {
+            val l3 = LotteryEntity.new {
                 award = 512;
                 price = 32;
-                draw = DateTime.now().plusDays(7)
+                draw = DateTime.now().plusSeconds(7)
             }
-            LotteryEntity.new {
+            val l4 = LotteryEntity.new {
                 award = 1024;
                 price = 32;
-                draw = DateTime.now().plusDays(11)
+                draw = DateTime.now().plusSeconds(11)
             }
-            val l = LotteryEntity.new {
+            val l5 = LotteryEntity.new {
                 award = 128;
                 price = 8;
-                draw = DateTime.now().plusDays(13)
+                draw = DateTime.now().plusSeconds(13)
             }
 
-            val u = UserEntity.new {
-                username= "user";
-                email= "user@email.com";
+            val u1 = UserEntity.new {
+                username= "user1";
+                email= "user1@email.com";
+                credit= 50;
+                password= Hash.sha512("user").toLowerCase()
+            }
+
+            val u2 = UserEntity.new {
+                username= "user2";
+                email= "user2@email.com";
                 credit= 50;
                 password= Hash.sha512("user").toLowerCase()
             }
 
             TicketEntity.new {
-                user = u;
-                lottery = l;
+                user = u1;
+                lottery = l1;
             }
+
+            TicketEntity.new {
+                user = u1;
+                lottery = l2;
+            }
+
+            TicketEntity.new {
+                user = u1;
+                lottery = l3;
+            }
+
+            TicketEntity.new {
+                user = u2;
+                lottery = l1;
+            }
+
+            TicketEntity.new {
+                user = u2;
+                lottery = l2;
+            }
+
+            TicketEntity.new {
+                user = u2;
+                lottery = l3;
+            }
+
         }
 
         return db

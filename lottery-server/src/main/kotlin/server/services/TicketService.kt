@@ -2,39 +2,44 @@ package server.services
 
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
-import server.domain.models.LotteryEntity
-import server.domain.models.TicketEntity
-import server.domain.models.UserEntity
-import server.domain.models.Users
+import server.domain.models.*
 
 class TicketService {
 
-    fun buy(userId: Int, lotteryId: Int) {
+    fun buy(buyer: UserEntity, desiredLottery: Lottery): UserEntity? {
 
-        transaction {
+        if(desiredLottery.id != null) {
 
-            val userEntity = UserEntity.findById(userId)
-            val lotteryEntity = LotteryEntity.findById(lotteryId)
+            var updatedUser: UserEntity? = null
 
-            if(userEntity != null && lotteryEntity != null) {
+            transaction {
 
-                if(userEntity.credit >= lotteryEntity.price) {
+                val lotteryEntity = LotteryEntity.findById(desiredLottery.id)
 
-                    TicketEntity.new {
-                        user = userEntity
-                        lottery = lotteryEntity
-                    }
+                if(lotteryEntity != null) {
 
-                    Users.update({Users.id eq userEntity.id}) {
-                        it[credit] = userEntity.credit - lotteryEntity.price
-                    }
+                    if(buyer.credit >= lotteryEntity.price) {
+
+                        TicketEntity.new {
+                            user = buyer
+                            lottery = lotteryEntity
+                        }
+
+                        Users.update({Users.id eq buyer.id}) {
+                            it[credit] = buyer.credit - lotteryEntity.price
+                        }
+
+                        updatedUser = UserEntity.findById(buyer.id)
+                    } else
+                        throw Exception("Insufficient credits")
+
                 } else
-                    throw Exception("Insufficient credits")
+                    throw Exception("User or lottery invalid")
+            }
 
-            } else
-                throw Exception("User or lottery invalid")
+            return updatedUser
         }
-
+        throw Exception("Something went wrong")
     }
 
     fun find(id: Int): LotteryEntity? = transaction { return@transaction LotteryEntity.findById(id) }

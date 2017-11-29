@@ -22,7 +22,10 @@ fun Route.lottery(lotteryService: LotteryService, authenticationService: Authent
             val lotteries = lotteryService.all()
 
             if(lotteries != null)
-                call.respond(lotteries)
+                call.respond(lotteries.map { lotteryEntity -> lotteryEntity.fetch {
+                    lotteryEntity.tickets = lotteryEntity.ticketEntities.map { t -> t.asTicket() }.toList()
+                    lotteryEntity.winner = lotteryEntity.winnerEntity?.asUser()
+                }.asLottery() })
             else
                 call.respond(HttpStatusCode.NoContent)
         }

@@ -20,15 +20,20 @@ import server.configuration.ServicesConfiguration.ticketService
 import server.configuration.ServicesConfiguration.userService
 import server.persistence.Database
 import server.routes.api
+import server.schedule.Schedule
 
 class Server(val port: Int) {
 
     private val database: Database = object :Database(PostgreSQLConfiguration()){}
 
+    private val schedule: Schedule = object :Schedule(lotteryService){}
+
     fun start() {
 
-        // TODO refact
+        // TODO refact to high order function
         database.start()
+
+        schedule.start()
 
         embeddedServer(Netty, port) {
 

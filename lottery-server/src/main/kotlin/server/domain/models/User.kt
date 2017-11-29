@@ -13,9 +13,8 @@ object Users: IntIdTable() {
     val password = text(name = "password")
 }
 
-data class User(var id: Int?, var username: String, var email: String,
-                var password: String, var credit: Int, var tickets: List<Ticket>?) {
-
+data class User(val id: Int?, var username: String, var email: String,
+                var password: String, var credit: Int, val tickets: List<Ticket>?) {
     init {
         require(username.isNotEmpty())
         require(email.isNotEmpty())
@@ -42,5 +41,4 @@ class UserEntity(id: EntityID<Int>) : IntEntity(id) {
         }
         return this
     }
-
 }

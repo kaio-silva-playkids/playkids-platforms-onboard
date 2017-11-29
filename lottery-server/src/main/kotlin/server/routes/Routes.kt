@@ -32,7 +32,7 @@ fun Route.api(authenticationService: AuthenticationService,
 
         lottery(lotteryService, authenticationService)
 
-        ticket(ticketService, authenticationService)
+        ticket(ticketService, userService, authenticationService)
 
         get {
             call.respondText("Lottery Server API", ContentType.Text.Html)
