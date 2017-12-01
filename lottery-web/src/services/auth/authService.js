@@ -16,12 +16,15 @@ export default Vue => ({
     return Vue.http.post(LOGIN,
       { username, password: crypto.SHA512(password).toString(crypto.enc.Hex) })
       .then((response) => {
-        const token = response.body.token;
-        const credentials = jwtDecode(token);
-
-        window.localStorage.setItem(JWT, token);
-        window.localStorage.setItem(CREDENTIALS, JSON.stringify(credentials));
-        this.credentials = credentials;
+        this.authenticate(response);
+        return true;
+      }).catch(() => false);
+  },
+  signUser(user) {
+    return Vue.http.post(LOGIN,
+      { username: user.username, password: user.password })
+      .then((response) => {
+        this.authenticate(response);
         return true;
       }).catch(() => false);
   },
@@ -42,5 +45,13 @@ export default Vue => ({
   },
   getCredentialsData() {
     return this.credentials;
+  },
+  authenticate(request) {
+    const token = request.body.token;
+    const credentials = jwtDecode(token);
+
+    window.localStorage.setItem(JWT, token);
+    window.localStorage.setItem(CREDENTIALS, JSON.stringify(credentials));
+    this.credentials = credentials;
   },
 });

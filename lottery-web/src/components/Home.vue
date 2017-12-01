@@ -10,7 +10,6 @@
             <el-menu-item index="1-3">Won</el-menu-item>
           </el-submenu>
           <el-menu-item index="3"><a href="https://github.com/kaio-silva-playkids/playkids-platforms-onboard" target="_blank">Github</a></el-menu-item>
-          <el-menu-item index="4">Logout</el-menu-item>
           <el-submenu index="4" class="profile" v-if="user">
             <template slot="title">Profile: {{user.username}} | credit: {{user.credit}}</template>
             <el-menu-item index="4-1" v-on:click="logout()">Logout</el-menu-item>
@@ -22,8 +21,12 @@
 
         <h2>{{title}}</h2>
 
+        <div v-if="!lotteries || lotteries.length === 0">
+          No results.
+        </div>
+
         <el-row v-loading="loading">
-          <el-col :span="6" v-for="lottery in lotteries">
+            <el-col :span="6" v-for="lottery in lotteries">
             <el-card :body-style="{ padding: '0px' }">
               <div class="card-image">
                 <div class="overlay price">Price: {{lottery.price}}</div>
@@ -62,6 +65,8 @@
 </template>
 
 <script>
+  import moment from 'moment';
+
   import BuyDialog from '../components/dialogs/BuyDialog.vue';
 
   const titles = ['Available', 'Participating', 'Won'];
@@ -131,10 +136,13 @@
           });
       },
       available() {
-        this.lotteries = this.$lodash.differenceBy(this.lotteries, this.user.tickets.map(ticket => ticket.lottery), 'id');
+        this.lotteries = this.$lodash.differenceBy(this.lotteries, this.user.tickets
+          .map(ticket => ticket.lottery), 'id')
+          .filter((lottery) => (lottery.winner === null && moment(lottery.draw).isAfter(moment())));
       },
       participating() {
-        this.lotteries = this.user.tickets.map(ticket => ticket.lottery);
+        this.lotteries = this.user.tickets.map(ticket => ticket.lottery)
+          .filter((lottery) => moment(lottery.draw).isAfter(moment()));
       },
       won() {
         this.lotteries = this.lotteries.filter((lottery) =>
@@ -145,7 +153,6 @@
         if (this.user.credit >= lottery.price) {
           this.loading = true;
           return this.$ticketService.buy(lottery).then((response) => {
-            console.log(response);
             this.user = response;
             this.select(this.active);
           }).catch((error) => {
@@ -154,16 +161,12 @@
             this.$message.error(`Failed to get lotteries: ${error.description}`);
           });
         }
-        // TODO create alert component
-        return alert('Insuficient credit');
+        return null;
       },
       logout() {
         this.$authService.logout();
         this.$router.push('login');
       },
-    },
-    date(draw) {
-      return this.$moment.utc(draw).format('DD/MM/YYYY HH:mm:ss');
     },
     created() {
       this.debouncedProfile =

@@ -5,7 +5,7 @@ export default {
   install(Vue) {
     Vue.filter('formatDate', (value) => {
       if (value) {
-        return moment.utc(value).format('DD/MM/YYYY hh:mm:ss');
+        return moment(value).format('DD/MM/YYYY HH:mm:ss');
       }
       return null;
     });

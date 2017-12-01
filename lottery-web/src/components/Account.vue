@@ -31,10 +31,13 @@
 
 <script>
   function createAccount() {
-    this.$accountService.create(this.form).then((response) => {
-      if (response) {
-        this.$router.push('home');
-        this.$emit('created', true);
+    this.$accountService.create(this.form).then((user) => {
+      if (user) {
+        this.$authService.signUser(user).then(() => {
+          this.$router.push('/');
+          this.$emit('authenticate', true);
+          return true;
+        });
       } else {
         this.$message.error('Failed to create account.');
       }
