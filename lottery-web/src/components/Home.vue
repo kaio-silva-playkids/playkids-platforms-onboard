@@ -107,7 +107,7 @@
             default:
               this.title = titles[0];
               this.available();
-              this.enableBuy = null;
+              this.enableBuy = true;
               break;
           }
         });

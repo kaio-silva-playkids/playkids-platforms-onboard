@@ -12,7 +12,9 @@ class LotteryService {
 
     fun create(lottery: Lottery) {
 
-        require(lottery.draw.isAfterNow)
+        require(lottery.draw.isAfterNow) {
+
+        }
 
         transaction {
             if(!LotteryEntity.find { Lotteries.id eq lottery.id}.empty()) {
@@ -34,31 +36,38 @@ class LotteryService {
         return@transaction LotteryEntity.all().toList()
     }
 
-    fun award(lottery: Lottery): Boolean {
-        if(lottery.tickets != null && lottery.tickets.isNotEmpty()) {
+    fun award(lotteryId: Int): Boolean {
 
-            val index = (0..lottery.tickets.size).random()
+        transaction {
 
-            transaction {
+            val lottery = LotteryEntity.findById(lotteryId)!!.apply {
+                this.fetch {
+                    this.tickets = this.ticketEntities.map { t -> t.asTicket() }.toList()
+                }
+            }.asLottery()
+
+            if (lottery.tickets != null && lottery.tickets.isNotEmpty()) {
+
+                val index = (0..lottery.tickets.size).random()
 
                 val user = UserEntity.findById(lottery.tickets.get(index).user.id!!)
 
-                if(user != null) {
+                if (user != null) {
 
                     Lotteries.update({ Lotteries.id eq lottery.id }) {
                         it[winner] = EntityID(user.id.value, Users)
                     }
 
                     Users.update({ Users.id eq user.id.value }) {
-                        Server.logger.info(it.toString())
                         it[credit] = lottery.award + user.credit
                     }
                 } else
                     throw Exception("Invalid user");
-            }
-            return true
+                true
+            } else
+                false
         }
-        return false
+        return true
     }
 
     fun ClosedRange<Int>.random() =

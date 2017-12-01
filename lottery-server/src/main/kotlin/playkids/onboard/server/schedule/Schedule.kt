@@ -13,9 +13,7 @@ open class Schedule(private val lotteryService: LotteryService) {
         val lotteries: List<LotteryEntity>? = lotteryService.all();
 
         if(lotteries != null) {
-            lotteries.forEach({lotteryEntity -> add(lotteryEntity.fetch {
-                lotteryEntity.tickets = lotteryEntity.ticketEntities.map { t -> t.asTicket() }.toList()
-            }.asLottery())});
+            lotteries.forEach({lotteryEntity -> add(lotteryEntity.asLottery())});
         }
 
         return this
@@ -25,7 +23,7 @@ open class Schedule(private val lotteryService: LotteryService) {
 
         val timer = Timer()
         timer.schedule(timerTask {
-            lotteryService.award(lottery);
+            lotteryService.award(lottery.id!!);
         }, lottery.draw.toDate())
 
     }

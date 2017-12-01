@@ -30,7 +30,7 @@ fun Route.ticket(ticketService: TicketService, userService: UserService, authent
                 call.respond(HttpStatusCode.NotFound)
         }
 
-        post<playkids.onboard.server.models.Lottery>("buy") { lottery ->
+        post<Lottery>("buy") { lottery ->
 
             val context = call.securityContext()
             var entity = userService.find(context.principal)

@@ -7,24 +7,6 @@
 ### runnning server
    ./gradlew run
 
-### API
-
-* Create user:
-curl http://localhost:8082/api/user -v -X PUT -d '{"username" : "user", "email" : "user@playkids.com"}' -H 'Content-type:application/json'
-
-* Find user:
-curl http://localhost:8082/api/user/1
-
-* Create lottery:
-curl http://localhost:8082/api/lottery -v -X PUT -d '{"price" : 50, "draw" : "2017-11-24T18:00:00.000-02:00[America/Sao_Paulo]"}' -H 'Content-type:application/json'
-
-* Find lottery:
-**curl http://localhost:8082/api/lottery/1**
-
-* Buy ticket:
-curl http://localhost:8082/api/ticket/buy -v -X POST -d '{"user" : 1, "lottery" : 1}' -H 'Content-type:application/json'    
-
-
 # PlayKids Lottery
 Welcome to the PlayKids Platforms Team! If you are reading this you should be excited to learn a lot, show your skills and helps us build great software for our customers.
 

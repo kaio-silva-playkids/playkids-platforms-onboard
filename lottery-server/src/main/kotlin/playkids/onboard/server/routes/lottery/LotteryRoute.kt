@@ -7,6 +7,7 @@ import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.route
+import playkids.onboard.server.models.Lottery
 import playkids.onboard.server.security.authenticate
 import playkids.onboard.server.services.AuthenticationService
 import playkids.onboard.server.services.LotteryService
@@ -33,13 +34,13 @@ fun Route.lottery(lotteryService: LotteryService, authenticationService: Authent
             val id = call.parameters["id"]!!
             val entity = lotteryService.find(id.toInt())
 
-            if(entity != null)
+            if(entity != null) {
                 call.respond(entity.asLottery())
-            else
+            } else
                 call.respond(HttpStatusCode.NotFound)
         }
 
-        put<playkids.onboard.server.models.Lottery> { lottery -> lotteryService.create(lottery)
+        put<Lottery> { lottery -> lotteryService.create(lottery)
             call.respond(HttpStatusCode.Created)
         }
 

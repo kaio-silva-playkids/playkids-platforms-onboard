@@ -7,16 +7,15 @@ import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.route
 import playkids.onboard.server.Server
+import playkids.onboard.server.models.User
 import playkids.onboard.server.services.UserService
 
 fun Route.account(userService: UserService) {
 
     route("account") {
 
-        post<playkids.onboard.server.models.User> { user ->
+        post<User> { user ->
             val user = userService.create(user)
-
-            Server.logger.info(user.toString())
 
             if(user != null)
                 call.respond(HttpStatusCode.Created, user)
@@ -26,3 +25,4 @@ fun Route.account(userService: UserService) {
 
     }
 }
+

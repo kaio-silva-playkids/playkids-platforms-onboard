@@ -15,7 +15,7 @@ fun Route.user(userService: UserService, authenticationService: AuthenticationSe
 
     route("user") {
 
-    authenticate(authenticationService)
+        authenticate(authenticationService)
 
         get("profile") {
             val context = call.securityContext()
